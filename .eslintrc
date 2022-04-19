@@ -1,0 +1,15 @@
+{
+  "extends": "eslint-config-neo/config-backend",
+  "rules": {
+    "no-console": "off",
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
+  },
+  "overrides": [
+    {
+      "files": ["test/**/*.test.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    }
+  ]
+}

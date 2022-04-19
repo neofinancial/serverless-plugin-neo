@@ -1,0 +1,17 @@
+{
+  "extends": "@tsconfig/node14",
+  "compilerOptions": {
+    "strict": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "useUnknownInCatchVariables": false,
+    "sourceMap": true,
+    "outDir": "build",
+    "baseUrl": ".",
+    "paths": {
+      "*": ["*", "node_modules/*", "src/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}
