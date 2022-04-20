@@ -1,5 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
+import chalk from 'chalk';
+import prettyBytes from 'pretty-bytes';
 import serverless from 'serverless';
 import Plugin from 'serverless/classes/Plugin';
 
@@ -64,21 +66,22 @@ const linkOrCopy = async (srcPath: string, dstPath: string, type?: fs.SymlinkTyp
   }
 };
 
-const getFileSize = async (path: string): Promise<string> => {
+const getFileSize = async (path: string, log: Plugin.Logging['log']): Promise<string> => {
   try {
     const stats = await fs.lstat(path);
+    const size = prettyBytes(stats.size);
 
-    if (stats.size < 1_000) {
-      return `${stats.size}B`;
-    } else if (stats.size < 1_000_000) {
-      return `${(stats.size / 1_000).toFixed(2)}KB`;
-    } else if (stats.size < 1_000_000_000) {
-      return `${(stats.size / 1_000_000).toFixed(2)}MB`;
+    if (stats.size < 1_000_000) {
+      return chalk.green(size);
+    } else if (stats.size < 10_000_000) {
+      return chalk.yellow(size);
     } else {
-      return `${stats.size}B`;
+      return chalk.red(size);
     }
-  } catch {
-    return 'Unknown';
+  } catch (error) {
+    log.error(error.message);
+
+    return chalk.gray('unknown');
   }
 };
 

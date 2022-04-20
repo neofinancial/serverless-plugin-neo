@@ -1,7 +1,7 @@
 {
   "name": "serverless-plugin-neo",
   "description": "Serverless plugin that compiles TypeScript code and bundles dependencies with node-file-trace",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Neo Financial Engineering <engineering@neofinancial.com>",
   "license": "MIT",
   "repository": {
@@ -35,25 +35,27 @@
     ]
   },
   "dependencies": {
-    "@vercel/nft": "0.18.0",
+    "@vercel/nft": "0.18.2",
+    "chalk": "4.1.2",
     "find-up": "^5.0.0",
-    "fs-extra": "^10.0.1",
-    "globby": "^11.1.0"
+    "fs-extra": "^10.1.0",
+    "globby": "^11.1.0",
+    "pretty-bytes": "^5.6.0"
   },
   "devDependencies": {
     "@tsconfig/node14": "^1.0.1",
     "@types/debug": "^4.1.7",
     "@types/fs-extra": "9.0.13",
     "@types/jest": "^27.4.1",
-    "@types/node": "17.0.23",
+    "@types/node": "17.0.25",
     "@types/serverless": "^3.0.2",
     "eslint": "^7.32.0",
     "eslint-config-neo": "^0.6.3",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
     "lint-staged": "^12.3.8",
-    "prettier": "^2.6.1",
-    "serverless": "3.12.0",
+    "prettier": "^2.6.2",
+    "serverless": "3.14.0",
     "ts-jest": "^27.1.4",
     "typescript": "^4.6.3"
   },

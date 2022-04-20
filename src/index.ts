@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs-extra';
 import globby from 'globby';
+import chalk from 'chalk';
 import { nodeFileTrace } from '@vercel/nft';
 import ts from 'typescript';
 import findUp from 'find-up';
@@ -10,6 +11,7 @@ import { Layer } from 'serverless/plugins/aws/provider/awsProvider';
 
 import typescript from './lib/typescript';
 import { extractFilenames, getFileSize, linkOrCopy, trimPathSeparators } from './lib/fs';
+import { handleSpecialCases } from './lib/dependencies';
 import { watchFiles } from './lib/watch-files';
 import { consoleLogger } from './lib/logger';
 
@@ -18,9 +20,9 @@ const BUILD_FOLDER = '.build';
 
 interface PluginNeoOptions {
   baseDirectory?: string;
+  excludePackages?: string[];
   skipCleanup?: boolean;
   tsconfig?: string;
-  excludePackages?: string[];
 }
 
 export class NeoPlugin {
@@ -253,15 +255,21 @@ export class NeoPlugin {
 
     const packagePrefix = trimPathSeparators(packageDir.replace(baseDir, ''));
 
-    this.log.notice('Packaging...');
+    this.log.notice('Bundling dependencies...');
 
     if (packagePrefix) {
-      this.log.notice('Monorepo detected');
+      this.log.notice(chalk.gray('Monorepo detected'));
       this.log.notice(
-        `Bundling modules from ${path.relative(process.cwd(), path.join(baseDir, 'node_modules'))} and ${path.relative(
-          process.cwd(),
-          path.join(packageDir, 'node_modules')
-        )}`
+        chalk.gray(
+          `Bundling dependencies from ${path.relative(
+            process.cwd(),
+            path.join(baseDir, 'node_modules')
+          )} and ${path.relative(process.cwd(), path.join(packageDir, 'node_modules'))}`
+        )
+      );
+    } else {
+      this.log.notice(
+        chalk.gray(`Bundling dependencies from ${path.relative(process.cwd(), path.join(baseDir, 'node_modules'))}`)
       );
     }
 
@@ -270,20 +278,21 @@ export class NeoPlugin {
     this.log.debug(`packagePrefix ${packagePrefix}`);
     this.log.debug(`buildFileNames ${buildFilenames}`);
 
-    const dependencies = await nodeFileTrace(buildFilenames, {
+    const tracedDependencies = await nodeFileTrace(buildFilenames, {
       base: baseDir,
       ignore: [...(this.pluginConfig?.excludePackages || []), '**/aws-sdk/**/*'],
     });
 
-    this.log.debug(`traced fileList ${dependencies.fileList}`);
-    this.log.debug(`trace warnings ${dependencies.warnings}`);
-    this.log.verbose(`trace reasons ${dependencies.reasons}`);
+    this.log.debug(`traced fileList ${tracedDependencies.fileList}`);
+    this.log.debug(`trace warnings ${tracedDependencies.warnings}`);
+    this.log.verbose(`trace reasons ${tracedDependencies.reasons}`);
 
+    const dependencies = handleSpecialCases([...tracedDependencies.fileList], baseDir);
     const localDependencies = [];
     const rootDependencies = [];
     const sourceFiles = [];
 
-    for (const dependency of dependencies.fileList) {
+    for (const dependency of dependencies) {
       if (dependency.startsWith('node_modules')) {
         rootDependencies.push(dependency);
       } else if (dependency.startsWith(path.join(packagePrefix, 'node_modules'))) {
@@ -322,13 +331,7 @@ export class NeoPlugin {
       await linkOrCopy(path.resolve('package.json'), this.outPackagePath, 'file');
     }
 
-    if (this.serverless.service.service) {
-      const artifactPath = path.join(this.originalServicePath, BUILD_FOLDER, SERVERLESS_FOLDER, `${this.serverless.service.service}.zip`);
-
-      this.log.success(`Finished packaging. Package size: ${await getFileSize(artifactPath)}`);
-    } else {
-      this.log.success('Finished packaging');
-    }
+    this.log.success('Dependencies bundled');
   }
 
   async moveArtifacts(): Promise<void> {
@@ -388,6 +391,12 @@ export class NeoPlugin {
       SERVERLESS_FOLDER,
       path.basename(service.package.artifact ?? '')
     );
+
+    const fileSize = await getFileSize(service.package.artifact, this.log);
+
+    // print artifact size
+    console.log();
+    this.log.notice(` ${chalk.blue(path.basename(service.package.artifact))}  ${fileSize}`);
   }
 
   async cleanup(): Promise<void> {

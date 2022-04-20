@@ -3,7 +3,7 @@ import ts from 'typescript';
 
 import typescript from './typescript';
 
-export function watchFiles(rootFileNames: string[], tsconfig:ts.CompilerOptions, callback: () => void): void {
+export function watchFiles(rootFileNames: string[], tsconfig: ts.CompilerOptions, callback: () => void): void {
   let watchedFiles = typescript.getSourceFiles(rootFileNames, tsconfig);
 
   function watchCallback(curr: Stats, prev: Stats): void {

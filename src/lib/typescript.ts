@@ -38,7 +38,9 @@ const getTypeScriptConfig = (
     const tsconfig = ts.parseJsonConfigFileContent(result.config, ts.sys, path.dirname(configFilePath));
 
     if (tsconfig.errors.length > 0) {
-      throw new Error(JSON.stringify(tsconfig.errors));
+      tsconfig.errors.forEach((error) => {
+        log.error(error.messageText.toString());
+      });
     }
 
     log.info(`Using tsconfig: ${tsconfigFile}`);
