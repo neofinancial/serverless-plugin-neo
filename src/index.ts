@@ -237,6 +237,8 @@ export class NeoPlugin {
       path.join(BUILD_FOLDER, filename.replace(/\.tsx?$/, '.js'))
     );
 
+    this.log.debug(`buildFilenames ${buildFilenames}`);
+
     let baseDir =
       findUp
         .sync('package.json', { cwd: path.resolve(this.originalServicePath, '..') })
@@ -287,7 +289,7 @@ export class NeoPlugin {
     this.log.debug(`trace warnings ${tracedDependencies.warnings}`);
     this.log.verbose(`trace reasons ${tracedDependencies.reasons}`);
 
-    const dependencies = handleSpecialCases([...tracedDependencies.fileList], baseDir);
+    const dependencies = await handleSpecialCases([...tracedDependencies.fileList], baseDir);
     const localDependencies = [];
     const rootDependencies = [];
     const sourceFiles = [];
@@ -395,8 +397,10 @@ export class NeoPlugin {
     const fileSize = await getFileSize(service.package.artifact, this.log);
 
     // print artifact size
+    this.log.notice('Artifacts:');
     console.log();
     this.log.notice(` ${chalk.blue(path.basename(service.package.artifact))}  ${fileSize}`);
+    console.log();
   }
 
   async cleanup(): Promise<void> {
