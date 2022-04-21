@@ -1,5 +1,9 @@
 # Serverless Plugin Neo Changelog
 
+## 0.1.3 - April 21, 2022
+
+- Move `recursive-readdir` to dependencies
+
 ## 0.1.2 - April 21, 2022
 
 - Add special handling for `datadog-lambda-js`
