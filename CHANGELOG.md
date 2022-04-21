@@ -1,5 +1,10 @@
 # Serverless Plugin Neo Changelog
 
+## 0.1.5 - April 21, 2022
+
+- Build automatically before publish
+- Fix build
+
 ## 0.1.4 - April 21, 2022
 
 - Remove console.log statement
