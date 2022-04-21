@@ -31,8 +31,6 @@ const addDirectory = async (
 
       const filename = path.join(path.dirname(dependency).replace(baseDir, ''), dirname, path.basename(file));
 
-      console.log(filename);
-
       dependencies.push(filename);
     }
   }

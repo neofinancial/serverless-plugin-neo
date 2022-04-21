@@ -1,5 +1,9 @@
 # Serverless Plugin Neo Changelog
 
+## 0.1.4 - April 21, 2022
+
+- Remove console.log statement
+
 ## 0.1.3 - April 21, 2022
 
 - Move `recursive-readdir` to dependencies
