@@ -314,7 +314,7 @@ export class NeoPlugin {
 
       this.log.verbose(`${sourcePath} -> ${destinationPath}`);
 
-      linkOrCopy(sourcePath, destinationPath);
+      await linkOrCopy(sourcePath, destinationPath);
     }
 
     for (const dependency of localDependencies) {
@@ -326,7 +326,7 @@ export class NeoPlugin {
 
       this.log.verbose(`${sourcePath} -> ${destinationPath}`);
 
-      linkOrCopy(sourcePath, destinationPath);
+      await linkOrCopy(sourcePath, destinationPath);
     }
 
     if (!fs.existsSync(this.outPackagePath)) {

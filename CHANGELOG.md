@@ -1,5 +1,9 @@
 # Serverless Plugin Neo Changelog
 
+## 0.1.6 - April 25, 2022
+
+- Fix race condition when linking dependencies
+
 ## 0.1.5 - April 21, 2022
 
 - Build automatically before publish
