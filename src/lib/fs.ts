@@ -56,10 +56,18 @@ const extractFilenames = (
 
 const linkOrCopy = async (srcPath: string, dstPath: string, type?: fs.SymlinkType): Promise<void> => {
   try {
-    return fs.ensureSymlink(srcPath, dstPath, type);
+    await fs.ensureSymlink(srcPath, dstPath, type);
   } catch (error) {
     if (error.code === 'EPERM' && error.errno === -4048) {
-      return fs.copy(srcPath, dstPath);
+      try {
+        await fs.copy(srcPath, dstPath);
+      } catch (error) {
+        console.error('Failed to symlink and copy file', error);
+      }
+    } else if (error.code === 'EEXIST' && error.errno === -17) {
+      console.warn(chalk.yellow(`WARNING: File already exists: ${srcPath} -> ${dstPath}`));
+
+      return Promise.resolve(void 0);
     }
 
     throw error;

@@ -1,5 +1,10 @@
 # Serverless Plugin Neo Changelog
 
+## 0.2.0 - April 25, 2022
+
+- Improve error handling when linking dependencies
+- Bundle source files that aren't included by TypeScript
+
 ## 0.1.6 - April 25, 2022
 
 - Fix race condition when linking dependencies

@@ -290,17 +290,31 @@ export class NeoPlugin {
     this.log.verbose(`trace reasons ${tracedDependencies.reasons}`);
 
     const dependencies = await handleSpecialCases([...tracedDependencies.fileList], baseDir);
-    const localDependencies = [];
-    const rootDependencies = [];
-    const sourceFiles = [];
+    const localDependencies = new Set<string>();
+    const rootDependencies = new Set<string>();
+    const sourceFiles = new Set<string>();
 
     for (const dependency of dependencies) {
       if (dependency.startsWith('node_modules')) {
-        rootDependencies.push(dependency);
+        rootDependencies.add(dependency);
       } else if (dependency.startsWith(path.join(packagePrefix, 'node_modules'))) {
-        localDependencies.push(dependency);
-      } else {
-        sourceFiles.push(dependency);
+        localDependencies.add(dependency);
+      } else if (
+        !dependency.includes('.build') &&
+        dependency !== 'package.json' &&
+        dependency !== path.join(packagePrefix, 'package.json')
+      ) {
+        sourceFiles.add(dependency);
+      }
+    }
+
+    for (const dependency of localDependencies) {
+      const filename = dependency.replace(`${path.join(packagePrefix)}${path.sep}`, '');
+
+      if (rootDependencies.has(filename)) {
+        this.log.verbose(`pruning root dependency: ${filename}`);
+
+        rootDependencies.delete(filename);
       }
     }
 
@@ -323,6 +337,15 @@ export class NeoPlugin {
         this.outModulesPath,
         dependency.replace(`${path.join(packagePrefix, 'node_modules')}${path.sep}`, '')
       );
+
+      this.log.verbose(`${sourcePath} -> ${destinationPath}`);
+
+      await linkOrCopy(sourcePath, destinationPath);
+    }
+
+    for (const file of sourceFiles) {
+      const sourcePath = path.resolve(baseDir, file);
+      const destinationPath = path.resolve(path.join(BUILD_FOLDER, file.replace(packagePrefix, '')));
 
       this.log.verbose(`${sourcePath} -> ${destinationPath}`);
 
