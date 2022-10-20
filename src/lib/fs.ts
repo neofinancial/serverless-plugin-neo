@@ -31,6 +31,13 @@ const extractFilenames = (
           continue;
         }
 
+        // Check if the .tsx files exists. If so return that to watch
+        if (fs.existsSync(path.join(cwd, `${fileName}tsx`))) {
+          files.push(`${fileName}tsx`);
+
+          continue;
+        }
+
         // Check if the .js files exists. If so return that to watch
         if (fs.existsSync(path.join(cwd, `${fileName}js`))) {
           files.push(`${fileName}js`);
@@ -41,13 +48,17 @@ const extractFilenames = (
         // Can't find the files. Watch will have an exception anyway. So throw one with error.
         log?.error(`Cannot locate handler: ${fileName} not found`);
 
-        throw new Error('TypeScript compilation failed. Please ensure handlers exist with a .ts or .js extension');
+        throw new Error(
+          'TypeScript compilation failed. Please ensure handlers exist with a .ts, .tsx or .js extension'
+        );
       }
 
       // Can't find the files. Watch will have an exception anyway. So throw one with error.
       log?.error('Cannot locate handler');
 
-      throw new Error('TypeScript compilation failed. Please ensure handlers exist with a ext .ts or .js extension');
+      throw new Error(
+        'TypeScript compilation failed. Please ensure handlers exist with a ext .ts, .tsx or .js extension'
+      );
     }
   }
 

@@ -25,7 +25,7 @@ const addDirectory = async (
     const files = await recursiveReaddir(path.join(baseDir, path.dirname(dependency), dirname));
 
     for (const file of files) {
-      if (file.endsWith('.ts') || file.endsWith('.map')) {
+      if (file.endsWith('.ts') || file.endsWith('.tsx') || file.endsWith('.map')) {
         continue;
       }
 

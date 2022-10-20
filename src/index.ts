@@ -77,41 +77,57 @@ export class NeoPlugin {
 
     this.hooks = {
       'before:run:run': async (): Promise<void> => {
+        this.log.debug('before:run:run');
+
         await this.compileTypeScript();
         await this.copyExtras();
         await this.copyDependencies();
       },
       'before:offline:start': async (): Promise<void> => {
+        this.log.debug('before:offline:start');
+
         await this.compileTypeScript();
         await this.copyExtras();
         await this.copyDependencies();
         this.watchAll();
       },
       'before:offline:start:init': async (): Promise<void> => {
+        this.log.debug('before:offline:start:init');
+
         await this.compileTypeScript();
         await this.copyExtras();
         await this.copyDependencies();
         this.watchAll();
       },
       'before:package:createDeploymentArtifacts': async (): Promise<void> => {
+        this.log.debug('before:package:createDeploymentArtifacts');
+
         await this.compileTypeScript();
         await this.copyExtras();
         await this.copyDependencies();
       },
       'after:package:createDeploymentArtifacts': async (): Promise<void> => {
+        this.log.debug('after:package:createDeploymentArtifacts');
+
         await this.moveArtifacts();
         await this.cleanup();
       },
       'before:deploy:function:packageFunction': async (): Promise<void> => {
+        this.log.debug('before:deploy:function:packageFunction');
+
         await this.compileTypeScript();
         await this.copyExtras();
         await this.copyDependencies();
       },
       'after:deploy:function:packageFunction': async (): Promise<void> => {
+        this.log.debug('after:deploy:function:packageFunction');
+
         await this.moveArtifacts();
         await this.cleanup();
       },
       'before:invoke:local:invoke': async (): Promise<void> => {
+        this.log.debug('before:invoke:local:invoke');
+
         const emittedFiles = await this.compileTypeScript();
 
         await this.copyExtras();
@@ -126,6 +142,8 @@ export class NeoPlugin {
         }
       },
       'after:invoke:local:invoke': async (): Promise<void> => {
+        this.log.debug('after:invoke:local:invoke');
+
         if (this.options.watch) {
           await this.watchFunction();
         }
@@ -172,7 +190,7 @@ export class NeoPlugin {
       return;
     }
 
-    this.log.info(`Watching TypeScript files...`);
+    this.log.info('Watching TypeScript files...');
 
     this.isWatching = true;
 

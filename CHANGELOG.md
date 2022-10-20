@@ -1,5 +1,9 @@
 # Serverless Plugin Neo Changelog
 
+## 0.2.1 - October 20, 2022
+
+- Add support for tsx files
+
 ## 0.2.0 - April 25, 2022
 
 - Improve error handling when linking dependencies
