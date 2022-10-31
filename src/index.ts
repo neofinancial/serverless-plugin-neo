@@ -168,10 +168,26 @@ export class NeoPlugin {
     return extractFilenames(this.originalServicePath, this.functions, this.log);
   }
 
+  async getExtrasFilenames(): Promise<string[]> {
+    const { service } = this.serverless;
+    const patterns = [...(service.package.include || []), ...(service.package.patterns || []), '!node_modules/**'];
+
+    // include any "extras" from the "include" section
+    if (patterns.length > 0) {
+      const files = await globby(patterns);
+
+      return files;
+    } else {
+      return [];
+    }
+  }
+
   async watchFunction(): Promise<void> {
     if (this.isWatching) {
       return;
     }
+
+    const extrasFilenames = await this.getExtrasFilenames();
 
     this.log.info(`Watching function ${this.options.function}...`);
     this.log.info('Waiting for changes...');
@@ -179,7 +195,7 @@ export class NeoPlugin {
     this.isWatching = true;
 
     await new Promise((resolve, reject) => {
-      watchFiles(this.rootFilenames, this.tsconfig, () => {
+      watchFiles(this.rootFilenames, extrasFilenames, this.tsconfig, () => {
         this.serverless.pluginManager.spawn('invoke:local').catch(reject);
       });
     });
@@ -190,11 +206,16 @@ export class NeoPlugin {
       return;
     }
 
-    this.log.info('Watching TypeScript files...');
+    const extrasFilenames = await this.getExtrasFilenames();
+
+    this.log.notice('Watching files...');
 
     this.isWatching = true;
 
-    watchFiles(this.rootFilenames, this.tsconfig, this.compileTypeScript.bind(this));
+    watchFiles(this.rootFilenames, extrasFilenames, this.tsconfig, () => {
+      this.compileTypeScript();
+      this.copyExtras();
+    });
   }
 
   async compileTypeScript(): Promise<string[]> {
@@ -216,7 +237,7 @@ export class NeoPlugin {
   async copyExtras(): Promise<void> {
     const { service } = this.serverless;
 
-    const patterns = [...(service.package.include || []), ...(service.package.patterns || [])];
+    const patterns = [...(service.package.include || []), ...(service.package.patterns || []), '!node_modules/**'];
 
     // include any "extras" from the "include" section
     if (patterns.length > 0) {

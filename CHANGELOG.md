@@ -1,5 +1,9 @@
 # Serverless Plugin Neo Changelog
 
+## 0.3.0 - October 31, 2022
+
+- Watch all included files, not just TypeScript files
+
 ## 0.2.1 - October 20, 2022
 
 - Add support for tsx files
