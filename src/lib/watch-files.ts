@@ -3,8 +3,13 @@ import ts from 'typescript';
 
 import typescript from './typescript';
 
-export function watchFiles(rootFileNames: string[], tsconfig: ts.CompilerOptions, callback: () => void): void {
-  let watchedFiles = typescript.getSourceFiles(rootFileNames, tsconfig);
+export function watchFiles(
+  rootFileNames: string[],
+  extrasFilenames: string[],
+  tsconfig: ts.CompilerOptions,
+  callback: () => void
+): void {
+  let watchedFiles = [...typescript.getSourceFiles(rootFileNames, tsconfig), ...extrasFilenames];
 
   function watchCallback(curr: Stats, prev: Stats): void {
     // Check timestamp
@@ -15,7 +20,7 @@ export function watchFiles(rootFileNames: string[], tsconfig: ts.CompilerOptions
     callback();
 
     // use can reference not watched yet file or remove reference to already watched
-    const newWatchFiles = typescript.getSourceFiles(rootFileNames, tsconfig);
+    const newWatchFiles = [...typescript.getSourceFiles(rootFileNames, tsconfig), ...extrasFilenames];
 
     watchedFiles.forEach((fileName) => {
       if (!newWatchFiles.includes(fileName)) {
