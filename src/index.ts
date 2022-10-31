@@ -251,7 +251,7 @@ export class NeoPlugin {
           fs.mkdirSync(dirname, { recursive: true });
         }
 
-        if (!fs.existsSync(destFileName)) {
+        if (!fs.existsSync(destFileName) || fs.statSync(filename).mtimeMs > fs.statSync(destFileName).mtimeMs) {
           fs.copySync(path.resolve(filename), path.resolve(path.join(BUILD_FOLDER, filename)));
         }
       }
