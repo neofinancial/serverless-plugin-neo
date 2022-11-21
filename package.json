@@ -1,7 +1,7 @@
 {
   "name": "serverless-plugin-neo",
   "description": "Serverless plugin that compiles TypeScript code and bundles dependencies with node-file-trace",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": "Neo Financial Engineering <engineering@neofinancial.com>",
   "license": "MIT",
   "repository": {

@@ -1,5 +1,9 @@
 # Serverless Plugin Neo Changelog
 
+## 0.3.2 - November 21, 2022
+
+- Fix a bug that prevented TypeScript compilation errors from failing the build
+
 ## 0.3.1 - October 31, 2022
 
 - Fix a bug that only copied included files if they didn't already exist in the destination

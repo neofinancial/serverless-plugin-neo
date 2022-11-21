@@ -227,11 +227,15 @@ export class NeoPlugin {
       this.servicePathUpdated = true;
     }
 
-    const emittedFiles = await typescript.compile(this.rootFilenames, this.tsconfig, this.log);
+    try {
+      const emittedFiles = await typescript.compile(this.rootFilenames, this.tsconfig, this.log);
 
-    this.log.success('TypeScript compiled');
+      this.log.success('TypeScript compiled');
 
-    return emittedFiles;
+      return emittedFiles;
+    } catch {
+      process.exit(1);
+    }
   }
 
   async copyExtras(): Promise<void> {
