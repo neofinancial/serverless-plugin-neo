@@ -75,12 +75,16 @@ const compile = async (
   const emitResult = program.emit();
   const allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
 
+  let compilationFailed = false;
+
   allDiagnostics.forEach((diagnostic) => {
     if (diagnostic.file && diagnostic.start) {
       const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
       const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
 
       if (diagnostic.category === ts.DiagnosticCategory.Error) {
+        compilationFailed = true;
+
         log.error(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
       } else if (diagnostic.category === ts.DiagnosticCategory.Warning) {
         log.warning(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
@@ -89,6 +93,10 @@ const compile = async (
       }
     }
   });
+
+  if (compilationFailed) {
+    throw new Error('TypeScript compilation failed');
+  }
 
   if (emitResult.emitSkipped) {
     throw new Error('TypeScript compilation failed');
