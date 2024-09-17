@@ -19,7 +19,7 @@ const getTypeScriptConfig = (
   cwd: string,
   tsconfigFile: string,
   buildDirectory: string,
-  log: Plugin.Logging['log']
+  log: Plugin.Logging['log'],
 ): ts.CompilerOptions => {
   const configFilePath = path.join(cwd, tsconfigFile);
 
@@ -67,7 +67,7 @@ const getTypeScriptConfig = (
 const compile = async (
   fileNames: string[],
   options: ts.CompilerOptions,
-  log: Plugin.Logging['log']
+  log: Plugin.Logging['log'],
 ): Promise<string[]> => {
   options.listEmittedFiles = true;
 
