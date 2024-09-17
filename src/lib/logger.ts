@@ -1,4 +1,4 @@
-import Plugin from 'serverless/classes/Plugin';
+import Plugin, { Progress } from 'serverless/classes/Plugin';
 
 const consoleLogger: Plugin.Logging = {
   log: {
@@ -12,6 +12,28 @@ const consoleLogger: Plugin.Logging = {
   },
   writeText: (text: string | string[]) => {
     console.log(text);
+  },
+  progress: {
+    get: (name: string): Progress => {
+      return {
+        namespace: 'namespace',
+        name,
+        update: (message: string) => console.log(message),
+        info: (message: string) => console.log(message),
+        notice: (message: string) => console.log(message),
+        remove: () => console.log('remove'),
+      };
+    },
+    create: (args: { message?: string; name?: string }): Progress => {
+      return {
+        namespace: 'namespace',
+        name: args.name || 'name',
+        update: (message: string) => console.log(message),
+        info: (message: string) => console.log(message),
+        notice: (message: string) => console.log(message),
+        remove: () => console.log('remove'),
+      };
+    },
   },
 };
 

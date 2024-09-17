@@ -1,6 +1,6 @@
 # Serverless Plugin Neo Changelog
 
-## 0.4.0 - August 28, 2024
+## 0.4.0 - September 17, 2024
 
 - Drop support for Node 14 and 16
 - Update dependencies
