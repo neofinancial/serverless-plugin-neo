@@ -53,7 +53,7 @@ export class NeoPlugin {
       this.originalServicePath,
       this.pluginConfig?.tsconfig || 'tsconfig.json',
       BUILD_FOLDER,
-      this.log
+      this.log,
     );
 
     this.log.debug(`process.cwd ${process.cwd()}`);
@@ -89,7 +89,7 @@ export class NeoPlugin {
         await this.compileTypeScript();
         await this.copyExtras();
         await this.copyDependencies();
-        this.watchAll();
+        void this.watchAll();
       },
       'before:offline:start:init': async (): Promise<void> => {
         this.log.debug('before:offline:start:init');
@@ -97,7 +97,7 @@ export class NeoPlugin {
         await this.compileTypeScript();
         await this.copyExtras();
         await this.copyDependencies();
-        this.watchAll();
+        void this.watchAll();
       },
       'before:package:createDeploymentArtifacts': async (): Promise<void> => {
         this.log.debug('before:package:createDeploymentArtifacts');
@@ -213,8 +213,8 @@ export class NeoPlugin {
     this.isWatching = true;
 
     watchFiles(this.rootFilenames, extrasFilenames, this.tsconfig, () => {
-      this.compileTypeScript();
-      this.copyExtras();
+      void this.compileTypeScript();
+      void this.copyExtras();
     });
   }
 
@@ -275,9 +275,9 @@ export class NeoPlugin {
 
     this.log.debug(`rootFileNames ${this.rootFilenames}`);
 
-    // TODO: should this only be the entrypoint?
+    // TODO [>=1.0.0]: should this only be the entrypoint?
     const buildFilenames = this.rootFilenames.map((filename) =>
-      path.join(BUILD_FOLDER, filename.replace(/\.tsx?$/, '.js'))
+      path.join(BUILD_FOLDER, filename.replace(/\.tsx?$/, '.js')),
     );
 
     this.log.debug(`buildFilenames ${buildFilenames}`);
@@ -308,13 +308,13 @@ export class NeoPlugin {
         chalk.gray(
           `Bundling dependencies from ${path.relative(
             process.cwd(),
-            path.join(baseDir, 'node_modules')
-          )} and ${path.relative(process.cwd(), path.join(packageDir, 'node_modules'))}`
-        )
+            path.join(baseDir, 'node_modules'),
+          )} and ${path.relative(process.cwd(), path.join(packageDir, 'node_modules'))}`,
+        ),
       );
     } else {
       this.log.notice(
-        chalk.gray(`Bundling dependencies from ${path.relative(process.cwd(), path.join(baseDir, 'node_modules'))}`)
+        chalk.gray(`Bundling dependencies from ${path.relative(process.cwd(), path.join(baseDir, 'node_modules'))}`),
       );
     }
 
@@ -378,7 +378,7 @@ export class NeoPlugin {
       const sourcePath = path.resolve(baseDir, dependency);
       const destinationPath = path.resolve(
         this.outModulesPath,
-        dependency.replace(`${path.join(packagePrefix, 'node_modules')}${path.sep}`, '')
+        dependency.replace(`${path.join(packagePrefix, 'node_modules')}${path.sep}`, ''),
       );
 
       this.log.verbose(`${sourcePath} -> ${destinationPath}`);
@@ -407,7 +407,7 @@ export class NeoPlugin {
 
     await fs.copy(
       path.join(this.originalServicePath, BUILD_FOLDER, SERVERLESS_FOLDER),
-      path.join(this.originalServicePath, SERVERLESS_FOLDER)
+      path.join(this.originalServicePath, SERVERLESS_FOLDER),
     );
 
     const layerNames = service.layers;
@@ -417,7 +417,7 @@ export class NeoPlugin {
         service.layers[layer.name].package.artifact = path.join(
           this.originalServicePath,
           SERVERLESS_FOLDER,
-          path.basename(service.layers[layer.name].package.artifact)
+          path.basename(service.layers[layer.name].package.artifact),
         );
       }
     });
@@ -429,7 +429,7 @@ export class NeoPlugin {
         fn.package.artifact = path.join(
           this.originalServicePath,
           SERVERLESS_FOLDER,
-          path.basename(fn.package.artifact)
+          path.basename(fn.package.artifact),
         );
       }
 
@@ -446,7 +446,7 @@ export class NeoPlugin {
           fn.package.artifact = path.join(
             this.originalServicePath,
             SERVERLESS_FOLDER,
-            path.basename(fn.package.artifact)
+            path.basename(fn.package.artifact),
           );
         }
       });
@@ -457,7 +457,7 @@ export class NeoPlugin {
     service.package.artifact = path.join(
       this.originalServicePath,
       SERVERLESS_FOLDER,
-      path.basename(service.package.artifact ?? '')
+      path.basename(service.package.artifact ?? ''),
     );
 
     const fileSize = await getFileSize(service.package.artifact, this.log);

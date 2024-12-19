@@ -1,4 +1,4 @@
-import { watchFile, unwatchFile, Stats } from 'fs';
+import { Stats, unwatchFile, watchFile } from 'fs';
 import ts from 'typescript';
 
 import typescript from './typescript';
@@ -7,7 +7,7 @@ export function watchFiles(
   rootFileNames: string[],
   extrasFilenames: string[],
   tsconfig: ts.CompilerOptions,
-  callback: () => void
+  callback: () => void,
 ): void {
   let watchedFiles = [...typescript.getSourceFiles(rootFileNames, tsconfig), ...extrasFilenames];
 

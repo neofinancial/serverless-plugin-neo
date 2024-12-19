@@ -6,20 +6,20 @@ const addFile = async (
   dependencies: string[],
   baseDir: string,
   dependency: string,
-  filename: string
+  filename: string,
 ): Promise<void> => {
   if (fs.existsSync(path.join(baseDir, path.dirname(dependency), filename))) {
     dependencies.push(path.join(path.dirname(dependency), filename));
   }
 
-  return Promise.resolve();
+  return void 0;
 };
 
 const addDirectory = async (
   dependencies: string[],
   baseDir: string,
   dependency: string,
-  dirname: string
+  dirname: string,
 ): Promise<void> => {
   if (fs.existsSync(path.join(baseDir, path.dirname(dependency), dirname))) {
     const files = await recursiveReaddir(path.join(baseDir, path.dirname(dependency), dirname));

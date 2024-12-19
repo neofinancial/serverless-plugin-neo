@@ -1,5 +1,10 @@
 # Serverless Plugin Neo Changelog
 
+## 0.4.0 - September 17, 2024
+
+- Drop support for Node 14 and 16
+- Update dependencies
+
 ## 0.3.2 - November 21, 2022
 
 - Fix a bug that prevented TypeScript compilation errors from failing the build

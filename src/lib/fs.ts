@@ -8,15 +8,17 @@ import Plugin from 'serverless/classes/Plugin';
 const extractFilenames = (
   cwd: string,
   functions: { [key: string]: serverless.FunctionDefinitionHandler | serverless.FunctionDefinitionImage },
-  log: Plugin.Logging['log']
+  log: Plugin.Logging['log'],
 ): string[] => {
-  if (!functions || Object.keys(functions).length === 0) return [];
+  if (!functions || Object.keys(functions).length === 0) {
+    return [];
+  }
 
   const files: string[] = [];
 
   for (const fn of Object.values(functions)) {
     if ('handler' in fn) {
-      const fnName = fn.handler.split('.').slice(-1)[0];
+      const fnName = fn.handler.split('.').at(-1);
 
       if (fnName) {
         const fnNameLastAppearanceIndex = fn.handler.lastIndexOf(fnName);
@@ -49,7 +51,7 @@ const extractFilenames = (
         log?.error(`Cannot locate handler: ${fileName} not found`);
 
         throw new Error(
-          'TypeScript compilation failed. Please ensure handlers exist with a .ts, .tsx or .js extension'
+          'TypeScript compilation failed. Please ensure handlers exist with a .ts, .tsx or .js extension',
         );
       }
 
@@ -57,7 +59,7 @@ const extractFilenames = (
       log?.error('Cannot locate handler');
 
       throw new Error(
-        'TypeScript compilation failed. Please ensure handlers exist with a ext .ts, .tsx or .js extension'
+        'TypeScript compilation failed. Please ensure handlers exist with a ext .ts, .tsx or .js extension',
       );
     }
   }
@@ -78,7 +80,7 @@ const linkOrCopy = async (srcPath: string, dstPath: string, type?: fs.SymlinkTyp
     } else if (error.code === 'EEXIST' && error.errno === -17) {
       console.warn(chalk.yellow(`WARNING: File already exists: ${srcPath} -> ${dstPath}`));
 
-      return Promise.resolve(void 0);
+      return void 0;
     }
 
     throw error;
