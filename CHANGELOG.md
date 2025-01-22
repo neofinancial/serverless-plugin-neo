@@ -1,5 +1,9 @@
 # Serverless Plugin Neo Changelog
 
+## 0.3.3 - Jan 22, 2025
+
+- Dependency updates
+
 ## 0.3.2 - November 21, 2022
 
 - Fix a bug that prevented TypeScript compilation errors from failing the build
